@@ -1,7 +1,7 @@
 /*
  * This file is derived from the MicroPython project, http://micropython.org/
  *
- * Copyright (c) 2020, Pycom Limited and its licensors.
+ * Copyright (c) 2021, Pycom Limited and its licensors.
  *
  * This software is licensed under the GNU GPL version 3 or any later version,
  * with permitted additional terms. For more information see the Pycom Licence
@@ -405,12 +405,12 @@ STATIC mp_obj_t machine_sleep (uint n_args, const mp_obj_t *arg) {
     bool reconnect = false;
 
 #if defined(FIPY) || defined(GPY)
-    if (lteppp_modem_state() < E_LTE_MODEM_DISCONNECTED) {
+    if (lteppp_get_modem_conn_state() < E_LTE_MODEM_DISCONNECTED) {
         lteppp_deinit();
     }
 #endif
 
-#if defined(LOPY) || defined(LOPY4) || defined(FIPY)
+#ifdef MOD_LORA_ENABLED
     /* Send LoRa module to Sleep Mode */
     modlora_sleep_module();
     while(!modlora_is_module_sleep())
@@ -466,7 +466,7 @@ STATIC mp_obj_t machine_deepsleep (uint n_args, const mp_obj_t *arg) {
     modbt_deinit(false);
     wlan_deinit(NULL);
 #if defined(FIPY) || defined(GPY)
-    if (lteppp_modem_state() < E_LTE_MODEM_DISCONNECTED) {
+    if (lteppp_get_modem_conn_state() < E_LTE_MODEM_DISCONNECTED) {
         lteppp_deinit();
     }
 #endif
